@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/charlottejuniordevs/api_toolbox
-  revision: eb6f02984e92dc14702be53d82b01bef92382f57
+  revision: 8c33d9862e2169b0eff077f78d6a62c5a13edc9d
   specs:
     api_toolbox (0.1.0)
       httparty
@@ -9,11 +9,11 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.0)
+    addressable (2.5.1)
       public_suffix (~> 2.0, >= 2.0.2)
     buftok (0.2.0)
     coderay (1.1.1)
-    domain_name (0.5.20170223)
+    domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.2.0)
     equalizer (0.0.11)
@@ -78,4 +78,4 @@ DEPENDENCIES
   twitter
 
 BUNDLED WITH
-   1.14.5
+   1.14.6
