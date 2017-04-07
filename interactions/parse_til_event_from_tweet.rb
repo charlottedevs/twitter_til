@@ -13,10 +13,8 @@ module TwitterTIL
     end
 
     def build_event
-      return unless valid_til_tweet?
-
       OpenStruct.new.tap do |obj|
-        obj.event = build_event_params
+        obj.event = valid_til_tweet? ? build_event_params : nil
       end
     end
 
@@ -27,19 +25,24 @@ module TwitterTIL
         event: {
           category: "til-tweets",
           user_id:  user_id,
-          info:     {
-            twitter_handle: handle,
-            text:           tweet_text,
-            url:            tweet_url
-          }
+          info:     info_params
         }
       }
     end
 
+    def info_params
+      {
+        twitter_handle: handle,
+        text:           tweet_text,
+        url:            tweet_url
+      }
+    end
+
     def user_id
-      ::ApiToolbox::FetchUser.call(
+      result = ::ApiToolbox::FetchUser.call(
         user_params: { search: "twitter_handle", value: handle }
-      ).user&.id
+      )
+      result.user["id"]
     end
 
     # Uncomment below to filter messages to only messages
