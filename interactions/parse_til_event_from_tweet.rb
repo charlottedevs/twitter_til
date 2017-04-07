@@ -24,14 +24,15 @@ module TwitterTIL
 
     def build_event_params
       {
-        category: "til-tweets",
-        user_id:  user_id,
-        info:     {
-          twitter_handle: handle,
-          text:           tweet_text,
-          url:            tweet_url
+        event: {
+          category: "til-tweets",
+          user_id:  user_id,
+          info:     {
+            twitter_handle: handle,
+            text:           tweet_text,
+            url:            tweet_url
+          }
         }
-
       }
     end
 

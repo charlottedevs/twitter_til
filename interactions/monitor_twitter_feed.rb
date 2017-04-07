@@ -23,7 +23,7 @@ module TwitterTIL
       private
 
       def handle_event(event)
-        log_event(event) { ::ApiToolbox::PostEventToAPI.call(event) }
+        log_event(event) { ::ApiToolbox::PostEventToAPI.call(event_params: event) }
       end
 
       def log_event(event)
