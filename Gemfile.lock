@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/charlottejuniordevs/api_toolbox
-  revision: 8c33d9862e2169b0eff077f78d6a62c5a13edc9d
+  revision: 880e886bfe62a9dc9a96331891b01762350f1ee0
   specs:
     api_toolbox (0.1.0)
       httparty

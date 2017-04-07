@@ -37,7 +37,7 @@ module TwitterTIL
 
     def user_id
       ::ApiToolbox::FetchUser.call(
-        user_params: { twitter_handle: handle }
+        user_params: { search: "twitter_handle", value: handle }
       ).user&.id
     end
 
