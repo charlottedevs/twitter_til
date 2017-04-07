@@ -1,64 +1,70 @@
-class ParseTILEventFromTweet
-  class << self
-    def call(tweet)
-      new(tweet).build_event
+module TwitterTIL
+  class ParseTILEventFromTweet
+    class << self
+      def call(tweet)
+        new(tweet).build_event
+      end
     end
-  end
 
-  attr_reader :tweet
+    attr_reader :tweet
 
-  def initialize(tweet)
-    @tweet = tweet
-  end
-
-  private
-
-  def build_event
-    return unless valid_til_tweet?
-
-    OpenStruct.new.tap do |obj|
-      obj.event = build_event_params
+    def initialize(tweet)
+      @tweet = tweet
     end
-  end
 
-  def build_event_params
-    {
-      category: "til-tweets",
-      user_id:  user_id,
-      info:     {
-        twitter_handle: handle,
-        text:           tweet_text,
-        url:            tweet_url
+    def build_event
+      return unless valid_til_tweet?
+
+      OpenStruct.new.tap do |obj|
+        obj.event = build_event_params
+      end
+    end
+
+    private
+
+    def build_event_params
+      {
+        category: "til-tweets",
+        user_id:  user_id,
+        info:     {
+          twitter_handle: handle,
+          text:           tweet_text,
+          url:            tweet_url
+        }
+
       }
+    end
 
-    }
-  end
+    def user_id
+      ::ApiToolbox::FetchUser.call(
+        user_params: { twitter_handle: handle }
+      ).user&.id
+    end
 
-  def user_id
-    ApiToolbox::FetchUser.call(user_params: { twitter_handle: handle })
-  end
+    # Uncomment below to filter messages to only messages
+    # where CLTJRDEVS is @mentioned.
+    def valid_til_tweet?
+      til_tweet? # && mentioned?
+    end
 
-  def valid_til_tweet?
-    mentioned? && til_tweet?
-  end
+    def mentioned?
+      tweet.user_mentions.map(&:screen_name).include? "cltjrdevs"
+    end
 
-  def mentioned?
-    tweet.user_mentions.map(&:screen_name).include? "cltjrdevs"
-  end
+    def til_tweet?
+      tweet.hashtags.map(&:text).any? { |hshtg| hshtg =~ /^til$/i }
+    end
 
-  def til_tweet?
-    tweet.hashtags.map(&:text).any? { |hshtg| hshtg =~ /^til$/i }
-  end
+    def handle
+      tweet.user.screen_name
+    end
 
-  def handle
-    tweet.user.handle
-  end
+    def tweet_text
+      tweet.text
+    end
 
-  def tweet_text
-    tweet.text
-  end
-
-  def tweet_url
-    tweet.uri.to_s
+    def tweet_url
+      tweet.uri.to_s
+    end
   end
 end

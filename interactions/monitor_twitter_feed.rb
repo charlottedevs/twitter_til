@@ -1,4 +1,3 @@
-require "twitter"
 
 module TwitterTIL
   TWITTER_CONSUMER_KEY        = ENV["TWITTER_CONSUMER_KEY"]
@@ -9,18 +8,23 @@ module TwitterTIL
   class MonitorTwitterFeed
     class << self
       def call
-        client.user do |object|
+        streaming_client.user do |object|
           case object
           when Twitter::Tweet
             result = ParseTILEventFromTweet.call(object)
             event  = result.event
             next unless event
-            log_event(event) { ApiToolbox::PostEventToAPI.call(event) }
+            rest_client.favorite(object)
+            handle_event(event)
           end
         end
       end
 
       private
+
+      def handle_event(event)
+        log_event(event) { ::ApiToolbox::PostEventToAPI.call(event) }
+      end
 
       def log_event(event)
         puts "-" * 50
@@ -31,8 +35,16 @@ module TwitterTIL
         puts "-" * 50
       end
 
-      def client
-        @client ||= Twitter::Streaming::Client.new do |config|
+      def streaming_client
+        @streaming_client ||= Twitter::Streaming::Client.new(&twitter_config)
+      end
+
+      def rest_client
+        @rest_client ||= Twitter::REST::Client.new(&twitter_config)
+      end
+
+      def twitter_config
+        lambda do |config|
           config.consumer_key        = TWITTER_CONSUMER_KEY
           config.consumer_secret     = TWITTER_CONSUMER_SECRET
           config.access_token        = TWITTER_ACCESS_TOKEN
