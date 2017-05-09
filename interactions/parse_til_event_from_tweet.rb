@@ -42,13 +42,13 @@ module TwitterTIL
       result = ::ApiToolbox::FetchUser.call(
         user_params: { search: "twitter_handle", value: handle }
       )
-      result.user["id"]
+      result.user["id"] if result.user
     end
 
     # Uncomment below to filter messages to only messages
     # where CLTJRDEVS is @mentioned.
     def valid_til_tweet?
-      til_tweet? # && mentioned?
+      user_id && til_tweet? # && mentioned?
     end
 
     def mentioned?
